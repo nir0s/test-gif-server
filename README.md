@@ -44,6 +44,8 @@ python3 client.py
 ## Assumptions and Caveats
 
 * The client is on the same machine as the server. You'll have to change it to use the server's public address if you want it to work outside.
+* The region is hardcoded to `eu-west-1`.
+* Logging is almost non-existent.
 * The names of the sqs queue and s3 bucket are hardcoded to `test_queue` and `gif-test-bucket` correspondingly.
 * High performance will only be achieved if running within AWS.
 * Python shouldn't really be used here. Go, for instance, would be a better alternative as it would thread well when writing and consuming the messages.

@@ -8,6 +8,10 @@ import random
 
 import requests
 
+# Max messages per second
+# (assuming request time and event generation time is 0)
+MPS = 100
+
 
 def _get_comment():
     return 'test_comment'
@@ -36,7 +40,7 @@ def main(url='http://localhost:8000/gif'):
         # This is just for testing functionality.
         # Obviously, we should limit the amount of messages to the
         # interpeter's ability to generate them.
-        time.sleep(0.5)
+        time.sleep(1 / MPS)
         payload = _generate_event()
         # We encode here as python3 requires bytes, not str when base64
         # encoding

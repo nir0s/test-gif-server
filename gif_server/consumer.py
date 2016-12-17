@@ -13,6 +13,9 @@ from boto.s3.key import Key
 import objects
 
 
+CONSUMPTION_TIME = 10
+
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -68,14 +71,14 @@ def main():
             # Unfortunately, 10 is the max number of messages allowed in
             # a single call even though we know there's enough room in memory
             # for much more than that.
-            messages = Q.get_messages(1)
+            messages = Q.get_messages(10)
             stop = datetime.now() + maxrt
             while datetime.now() < stop and len(messages) > 0:
                 all_messages.extend(messages)
                 messages = Q.get_messages(10)
 
         # TODO: Address the case where there are no messages in the queue
-        get_messages(timedelta(seconds=3))
+        get_messages(timedelta(seconds=CONSUMPTION_TIME))
 
         # TODO: We should allow to provide the path for the files.
         # For now, they're kept under the cwd.
@@ -93,9 +96,9 @@ def main():
         os.remove(filename)
 
         # Reschedule
-        s.enter(60, 1, dump_events_from_sqs_to_s3, (sc,))
+        s.enter(CONSUMPTION_TIME, 1, dump_events_from_sqs_to_s3, (sc,))
 
-    s.enter(60, 1, dump_events_from_sqs_to_s3, (s,))
+    s.enter(CONSUMPTION_TIME, 1, dump_events_from_sqs_to_s3, (s,))
     s.run()
 
 
